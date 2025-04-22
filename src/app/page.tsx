@@ -9,7 +9,7 @@ export default function HomePage() {
 
     useEffect(() => {
         if (update) {
-            update(); // ✅ Safe check before calling
+            update(); // Safe check before calling
         }
     }, [update]); 
 
