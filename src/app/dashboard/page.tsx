@@ -331,7 +331,7 @@ export default function HomePage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredStock.map((item, index) => (
+                            {filteredStock.map((item) => (
                                 <tr 
                                     key={item.PatternNo} 
                                     className="even:bg-white odd:bg-gray-50 dark:even:bg-[#1a1a1a] dark:odd:bg-[#111]"
