@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// ✅ Allowed origins (update with your domain)
+// Allowed origins (update with your domain)
 const allowedOrigins = ["https://wallpapermastersmanagement.vercel.app/", "http://localhost:3000"];
 
 export function middleware(req: NextRequest) {
@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
         return new NextResponse("CORS policy: This origin is not allowed", { status: 403 });
     }
 
-    // ✅ Allow CORS for allowed origins
+    // Allow CORS for allowed origins
     const res = NextResponse.next();
     res.headers.set("Access-Control-Allow-Origin", origin || "https://yourdomain.com");
     res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
