@@ -14,7 +14,7 @@ export function middleware(req: NextRequest) {
 
     // Allow CORS for allowed origins
     const res = NextResponse.next();
-    res.headers.set("Access-Control-Allow-Origin", origin || "https://yourdomain.com");
+    res.headers.set("Access-Control-Allow-Origin", origin || "https://wallpapermastersmanagement.vercel.app/");
     res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
@@ -27,5 +27,5 @@ export function middleware(req: NextRequest) {
 
 // ✅ Apply this middleware **only to API routes**
 export const config = {
-    matcher: "/api/:path*",
+    matcher: "api/:path*",
 };
