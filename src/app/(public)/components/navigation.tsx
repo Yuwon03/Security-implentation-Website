@@ -1,30 +1,50 @@
+import Image from "next/image";
 import Link from "next/link";
+import localFont from "next/font/local";
 
-export const Navigation = () => {
-  return (
-    <nav className="flex justify-start items-center gap-8 px-10 py-4 bg-white shadow-md text-black text-lg font-medium">
-      <Link href="/" className="hover:underline">
-        Home
-      </Link>
-      <a
-        href="https://www.ksgdw.com/eng/products/-/DARAE/1"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        Patterns
-      </a>
-      <Link href="/contact" className="hover:underline">
-        Contact
-      </Link>
-      <a
-        href="https://www.crayon-wallpaper.com/goods/goods_list.php?page=2&cateCd=001"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        Mural
-      </a>
-    </nav>
-  );
-};
+const myFont = localFont({ src: "../fonts/Raleway-VariableFont_wght.ttf" });
+
+export const Navigation = () => (
+  <nav className="flex items-center justify-between bg-white px-6">
+    {/* 1) Logo on the left */}
+    <Link href="/">
+      <Image
+        src="/logo.png"
+        alt="Wallpaper masters logo"
+        width={64}
+        height={78}
+        priority
+      />
+    </Link>
+
+    {/* 2) Your menu items */}
+    <div className="ml-20 flex items-center space-x-8">
+      {[
+        { href: "/", label: "Home" },
+        { href: "/patterns", label: "Patterns", external: true, extHref: "https://…" },
+        { href: "/contact", label: "Contact" },
+        { href: "/mural", label: "Mural", external: true, extHref: "https://…" },
+      ].map((link) =>
+        link.external ? (
+          <a
+            key={link.label}
+            href={link.extHref}
+            target="_blank"
+            rel="noopener"
+            className={`${myFont.className} text-xl`}
+          >
+            {link.label}
+          </a>
+        ) : (
+          <Link
+            key={link.label}
+            href={link.href}
+            className={`${myFont.className} text-xl`}
+          >
+            {link.label}
+          </Link>
+        )
+      )}
+    </div>
+  </nav>
+);

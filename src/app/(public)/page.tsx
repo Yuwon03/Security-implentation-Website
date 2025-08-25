@@ -1,4 +1,6 @@
+import { CalendarDaysIcon, Squares2X2Icon, TruckIcon } from '@heroicons/react/24/outline'
 import Image from "next/image";
+import Link from "next/link";
 
 const sections = [
   {
@@ -109,6 +111,11 @@ const sections = [
 ];
 
 export default function Home() {
+  const features = [
+    { name: 'Showroom open 7 days',       Icon: CalendarDaysIcon },
+    { name: '2,000+ patterns displayed',  Icon: Squares2X2Icon },
+    { name: 'Supply & Installation',      Icon: TruckIcon },
+  ]
   return (
     <div>
       <div style={{ position: "relative", width: "100%", height: "400px" }}>
@@ -133,44 +140,52 @@ export default function Home() {
             transform: "translate(-50%, -50%)",
             color: "white",
             fontSize: "2rem",
-            fontWeight: "bold",
+            fontWeight: "MyCustomFont2",
           }}
         >
           Supply & Installation
         </p>
       </div>
 
-      <div className="text-center mt-10">
-        <p className="tracking-wider text-3xl font-semibold">
-          Open 7days / Biggest showroom
-        </p>
-        <p className="tracking-wider text-3xl mt-2 font-semibold">
-          2,000+ patterns displayed
-        </p>
-        <p className="tracking-wider text-3xl mt-2 font-semibold">
-          Pick free samples up Today
-        </p>
+      <div
+        className="flex justify-center gap-12 mt-10"
+        style={{ fontFamily: 'MyCustomFont' }}
+      >
+        {features.map(({ name, Icon }) => (
+          <div key={name} className="flex flex-col items-center gap-2">
+            <div className="bg-gray-200 p-3 rounded-full">
+              <Icon className="w-8 h-8 text-green-600" />
+            </div>
+            <p className="font-semibold text-xl text-center">{name}</p>
+          </div>
+        ))}
       </div>
 
-      <main className="grid grid-cols-2 gap-2 p-2 mt-20 bg-gray-100">
+      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 mt-20 bg-gray-100">
         {sections.map((section) => (
           <div key={section.id} className="mt-10 text-center">
             <p className="text-black text-2xl mb-4 font-semibold">
               {section.title}
             </p>
-            <a href={section.href} className="relative group inline-block">
-              <Image
-                src={section.image}
-                alt={section.alt}
-                width={550}
-                height={475}
-                className="object-cover z-0"
-              />
-              <div
-                className="absolute inset-0 z-10 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p className="text-white text-2xl font-semibold">Discover</p>
+
+            <Link href={section.href} className="block group">
+              {/* 1) Aspect-ratio box (16:9) */}
+              <div className="relative w-full aspect-video overflow-hidden rounded-lg">
+                {/* 2) fill + object-cover makes them all crop/scale to fit */}
+                <Image
+                  src={section.image}
+                  alt={section.alt}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+
+                {/* 3) Your existing overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center
+                                opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white text-2xl font-semibold">Discover</p>
+                </div>
               </div>
-            </a>
+            </Link>
           </div>
         ))}
       </main>
