@@ -2,21 +2,21 @@ import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 import { driveFolderMap } from "@/lib/driveFolders";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: { category: string } }
+  ctx: { params: Promise<{ category: string }> } // 👈 params is a Promise
 ) {
-  const category = params.category;
+  const { category } = await ctx.params;        // 👈 await it
   const folderId = driveFolderMap[category];
 
   if (!folderId) {
-    return NextResponse.json(
-      { error: "Invalid category" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
 
-  const pageSize = 15;
+  const pageSize = 100;
   const pageToken = req.nextUrl.searchParams.get("pageToken") || undefined;
 
   try {
@@ -27,29 +27,29 @@ export async function GET(
       },
       scopes: ["https://www.googleapis.com/auth/drive.readonly"],
     });
-
     const drive = google.drive({ version: "v3", auth });
 
     const res = await drive.files.list({
       q: `'${folderId}' in parents and mimeType contains 'image/' and trashed = false`,
-      fields: "nextPageToken, files(id, name, webContentLink, thumbnailLink)",
+      fields: "nextPageToken, files(id, name, mimeType, createdTime)",
       pageSize,
       pageToken,
+      orderBy: "createdTime desc, name_natural",
     });
 
-    const images = (res.data.files || []).map((file) => ({
-      id: file.id!,
-      name: file.name!,
-      url: file.webContentLink!,
-      thumbnail: file.thumbnailLink!,
+    const images = (res.data.files || []).map((f) => ({
+      id: f.id!,
+      name: f.name!,
+      mimeType: f.mimeType || "image/jpeg",
+      // createdTime: f.createdTime, // keep if you want to show it in UI/debug
     }));
 
-    return NextResponse.json({
-      images,
-      nextPageToken: res.data.nextPageToken || null,
-    });
+    return NextResponse.json(
+      { images, nextPageToken: res.data.nextPageToken || null },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } }
+    );
   } catch (error) {
-    console.error("Drive API Error:", error);
+    console.error("Drive API Error (list):", error);
     return NextResponse.json({ error: "Failed to load images" }, { status: 500 });
   }
 }
