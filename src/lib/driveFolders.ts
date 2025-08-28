@@ -1,7 +1,21 @@
+// src/lib/driveFolders.ts
+
 export const driveFolderMap: Record<string, string> = {
-    bedroom: "1nugU_dYuZis97aPvCzfc6fJGcKEhaDMz",
-    livingroom: "FOLDER_ID_FOR_LIVINGROOM",
-    kitchen: "FOLDER_ID_FOR_KITCHEN",
-    // Add more as needed
-  };
-  
+  grarge: process.env.DRIVE_GRARGE || "",
+  prayer: process.env.DRIVE_PRAYER || "",
+  ciling: process.env.DRIVE_CILING || "",
+  niche: process.env.DRIVE_NICHE || "",
+  office: process.env.DRIVE_OFFICE || "",
+  dining: process.env.DRIVE_DINING || "",
+  staircase: process.env.DRIVE_STAIRCASE || "",
+  hallway: process.env.DRIVE_ENTRY_HALLWAY || "",
+  custom: process.env.DRIVE_CUSTOM || "",
+  toilet: process.env.DRIVE_TOILET || "",
+  commercial: process.env.DRIVE_RESTAURANT || "",
+  cinema: process.env.DRIVE_CINEMA || "",
+  fireplace: process.env.DRIVE_FIREPLACE || "",
+  living: process.env.DRIVE_LIVING || "",
+  kids: process.env.DRIVE_KIDS || "",
+  tvback: process.env.DRIVE_TV_BACK || "",
+  bedroom: process.env.DRIVE_BEDROOM || "",
+};

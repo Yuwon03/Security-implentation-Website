@@ -16,7 +16,7 @@ export async function GET(
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
 
-  const pageSize = 100;
+  const pageSize = 30;
   const pageToken = req.nextUrl.searchParams.get("pageToken") || undefined;
 
   try {
