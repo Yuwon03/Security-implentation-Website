@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "./components/navigation";
 import { Analytics } from "@vercel/analytics/react"
+import Link from "next/link";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,9 +43,12 @@ export default function RootLayout({
           <p>
             Wallpaper Masters Pty Ltd ABN: 25 491 108 839<br />
             Copyright © 2006 Bruce Choi&nbsp;&nbsp;
-            <a style={{ color: "blue", marginLeft: "1rem" }} href="/about">
+            <Link
+              href="/about"
+              className="text-blue-600 underline-offset-2 hover:underline ml-4"
+            >
               About Us
-            </a>
+            </Link>
           </p>
         </footer>
         <Analytics />
