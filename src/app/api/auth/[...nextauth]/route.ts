@@ -9,6 +9,20 @@ const handler = NextAuth({
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            // authorization: {
+            //   params: {
+            //     scope: [
+            //       "openid",
+            //       "email",
+            //       "profile",
+            //       "https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata",
+            //       "https://www.googleapis.com/auth/photoslibrary.appendonly",       // if you’ll create albums/upload
+            //       "https://www.googleapis.com/auth/photoslibrary.edit.appcreateddata", // optional for batch add/remove
+            //     ].join(" "),
+            //     access_type: "offline",
+            //     prompt: "consent", // keep until you've captured the refresh token once
+            //   },
+            // },
         }),
     ],
     callbacks: {
@@ -35,7 +49,23 @@ const handler = NextAuth({
             if (user) {
                 token.email = user.email;
             }
+            
+            // if (account?.access_token) (token as any).access_token = account.access_token;
+            // if (account?.expires_at) (token as any).expires_at = (account.expires_at as number) * 1000;
+
+            // // ✅ Capture refresh token the FIRST time Google returns it.
+            // // Google will often omit it on subsequent logins; so keep the old one if none is sent.
+            // if (account?.refresh_token) {
+            //   (token as any).refresh_token = account.refresh_token;
+            //   // 🔒 SERVER LOG ONLY (watch your terminal where `next dev` runs)
+            //   console.log(
+            //     "\n=== GOOGLE PHOTOS REFRESH TOKEN (save as PHOTOS_REFRESH_TOKEN) ===\n",
+            //     account.refresh_token,
+            //     "\n=================================================================\n"
+            //   );
+            // }
             return token;
+            
         },
     },
     session: {
