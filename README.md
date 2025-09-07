@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Create and switch to dev branch
 git checkout -b dev
 
-## Work, commit, test here
+## Work, commit, test here.
 git add .
 git commit -m "Add new feature in dev"
 
