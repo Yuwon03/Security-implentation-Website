@@ -34,14 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="flex justify-between items-center py-4 px-8 bg-white text-black text-xl">
-          <Navigation />
-        </header>
-        <hr className="border-t-4 border-gray-200" />
-        {children}
+        <Navigation />
+        <main className="pt-12">{children}</main>
         <footer className="flex justify-center items-center p-4 bg-white text-black mt-10 text-center">
           <p>
             Wallpaper Masters Pty Ltd ABN: 25 491 108 839<br />
+            Showroom: 1 Vinegar Hill Rd Kellyville Ridge NSW 2155<br />
             Copyright © 2006 Bruce Choi&nbsp;&nbsp;
             <Link
               href="/about"
