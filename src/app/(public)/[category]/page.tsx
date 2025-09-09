@@ -16,7 +16,8 @@ export default function CategoryPage() {
 
   const [images, setImages] = useState<ImageItem[]>([]);
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadingRef = useRef(false);
   const loadedIdsRef = useRef<Set<string>>(new Set());
@@ -37,8 +38,13 @@ export default function CategoryPage() {
           }`,
           { cache: "no-store" } // server handles CDN caching
         );
-
-        if (!res.ok) throw new Error(`List failed: ${res.status}`);
+        if (!res.ok) {
+          const errText = await res.text().catch(() => "");
+          setError(
+            `Failed to load images (status ${res.status}). ${errText || ""}`.trim()
+          );
+          return;
+        }
         const data: { images: ImageItem[]; nextPageToken: string | null } =
           await res.json();
 
@@ -93,6 +99,12 @@ export default function CategoryPage() {
         {category}
       </h1>
 
+      {error && (
+        <div className="mx-auto max-w-2xl mb-8 rounded border border-red-300 bg-red-50 p-4 text-red-700 text-center">
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {images.map((img, i) => {
           const previewSrc = `/api/image-proxy?id=${encodeURIComponent(
@@ -104,7 +116,7 @@ export default function CategoryPage() {
             <button
               key={img.id}
               className="relative aspect-[3/2] overflow-hidden rounded shadow focus:outline-none"
-              onClick={() => setSelectedImage(fullSrc)}
+              onClick={() => setSelectedIndex(i)}
             >
               <Image
                 src={previewSrc}
@@ -123,27 +135,113 @@ export default function CategoryPage() {
 
       <div ref={observerRef} className="h-10" />
 
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="relative max-h-[90vh] max-w-[90vw] w-full h-full">
-            <Image
-              src={selectedImage}
-              alt="Full"
-              fill
-              className="object-contain"
-              sizes="90vw"
-              priority
-            />
-          </div>
-          <button
-            onClick={() => setSelectedImage(null)}
-            className="absolute top-6 right-6 text-white text-3xl font-bold"
-            aria-label="Close"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+      {selectedIndex !== null && images[selectedIndex] && (
+        <Lightbox
+          images={images}
+          index={selectedIndex}
+          onClose={() => setSelectedIndex(null)}
+          onChangeIndex={(idx) => setSelectedIndex(idx)}
+        />)
+      }
     </main>
+  );
+}
+
+function Lightbox({
+  images,
+  index,
+  onClose,
+  onChangeIndex,
+}: {
+  images: ImageItem[];
+  index: number;
+  onClose: () => void;
+  onChangeIndex: (nextIndex: number) => void;
+}) {
+  const startXRef = useRef<number | null>(null);
+  const deltaXRef = useRef<number>(0);
+
+  const numImages = images.length;
+  const clampIndex = (i: number) => (i + numImages) % numImages;
+
+  const goPrev = useCallback(() => onChangeIndex(clampIndex(index - 1)), [index, numImages, onChangeIndex]);
+  const goNext = useCallback(() => onChangeIndex(clampIndex(index + 1)), [index, numImages, onChangeIndex]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [goPrev, goNext, onClose]);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    startXRef.current = e.touches[0].clientX;
+    deltaXRef.current = 0;
+  };
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (startXRef.current === null) return;
+    deltaXRef.current = e.touches[0].clientX - startXRef.current;
+  };
+  const handleTouchEnd = () => {
+    const threshold = 50; // px
+    if (deltaXRef.current > threshold) {
+      goPrev();
+    } else if (deltaXRef.current < -threshold) {
+      goNext();
+    }
+    startXRef.current = null;
+    deltaXRef.current = 0;
+  };
+
+  const current = images[index];
+  const fullSrc = `/api/image-proxy?id=${encodeURIComponent(current.id)}`;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
+      onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <button
+        className="absolute top-6 right-6 text-white text-3xl font-bold"
+        aria-label="Close"
+        onClick={onClose}
+      >
+        ✕
+      </button>
+
+      <button
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl px-3 py-2 bg-black/40 rounded"
+        onClick={(e) => { e.stopPropagation(); goPrev(); }}
+        aria-label="Previous image"
+      >
+        ‹
+      </button>
+      <div
+        className="relative max-h-[90vh] max-w-[90vw] w-full h-full"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Image
+          src={fullSrc}
+          alt={current.name}
+          fill
+          className="object-contain"
+          sizes="90vw"
+          priority
+        />
+      </div>
+      <button
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl px-3 py-2 bg-black/40 rounded"
+        onClick={(e) => { e.stopPropagation(); goNext(); }}
+        aria-label="Next image"
+      >
+        ›
+      </button>
+    </div>
   );
 }

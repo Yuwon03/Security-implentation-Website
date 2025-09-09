@@ -2,8 +2,11 @@
 
 export const driveFolderMap: Record<string, string> = {
   grarge: process.env.DRIVE_GRARGE || "",
+  garage: process.env.DRIVE_GRARGE || "",
   prayer: process.env.DRIVE_PRAYER || "",
+  prayerroom: process.env.DRIVE_PRAYER || "",
   ciling: process.env.DRIVE_CILING || "",
+  ceiling: process.env.DRIVE_CILING || "",
   niche: process.env.DRIVE_NICHE || "",
   office: process.env.DRIVE_OFFICE || "",
   dining: process.env.DRIVE_DINING || "",
@@ -15,7 +18,10 @@ export const driveFolderMap: Record<string, string> = {
   cinema: process.env.DRIVE_CINEMA || "",
   fireplace: process.env.DRIVE_FIREPLACE || "",
   living: process.env.DRIVE_LIVING || "",
+  livingroom: process.env.DRIVE_LIVING || "",
   kids: process.env.DRIVE_KIDS || "",
+  kidsroom: process.env.DRIVE_KIDS || "",
   tvback: process.env.DRIVE_TV_BACK || "",
   bedroom: process.env.DRIVE_BEDROOM || "",
+  flooring: process.env.DRIVE_FLOORING || "",
 };
