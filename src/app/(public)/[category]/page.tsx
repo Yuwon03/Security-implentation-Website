@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
@@ -110,7 +111,6 @@ export default function CategoryPage() {
           const previewSrc = `/api/image-proxy?id=${encodeURIComponent(
             img.id
           )}&w=2000`; // grid
-          const fullSrc = `/api/image-proxy?id=${encodeURIComponent(img.id)}`; // modal
 
           return (
             <button
@@ -162,10 +162,15 @@ function Lightbox({
   const deltaXRef = useRef<number>(0);
 
   const numImages = images.length;
-  const clampIndex = (i: number) => (i + numImages) % numImages;
 
-  const goPrev = useCallback(() => onChangeIndex(clampIndex(index - 1)), [index, numImages, onChangeIndex]);
-  const goNext = useCallback(() => onChangeIndex(clampIndex(index + 1)), [index, numImages, onChangeIndex]);
+  const goPrev = useCallback(() => {
+    const next = (index - 1 + numImages) % numImages;
+    onChangeIndex(next);
+  }, [index, numImages, onChangeIndex]);
+  const goNext = useCallback(() => {
+    const next = (index + 1) % numImages;
+    onChangeIndex(next);
+  }, [index, numImages, onChangeIndex]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
