@@ -1,0 +1,10 @@
+*
+test.c
+
+!*/
+
+!libs/
+!source/
+!Makefile
+!roles.txt
+!.gitignore
